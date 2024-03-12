@@ -1,0 +1,2 @@
+# nox-vault
+ScretStore
