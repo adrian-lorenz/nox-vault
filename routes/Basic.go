@@ -2,10 +2,11 @@ package routes
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
+
+	"github.com/adrian-lorenz/nox-vault/cmux"
 	"github.com/adrian-lorenz/nox-vault/database"
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type Check struct {
@@ -29,5 +30,6 @@ func CheckService(c *gin.Context) {
 		cfov.Status = true
 		cfov.Message = "ok"
 	}
-	c.JSON(http.StatusOK, cfov)
+	c.JSON(200, cmux.JSON{"message": "Hello World"})
+
 }

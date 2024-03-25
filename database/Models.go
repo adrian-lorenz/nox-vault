@@ -1,34 +1,33 @@
 package database
 
-type Store struct {
-	ID   uint   `gorm:"primaryKey"`
-	Guid string `gorm:"size:100"`
-	Typ string `gorm:"size:100"`
-	Desc string `gorm:"size:500"`
-	Value1 string
-	Value2 string
-	Value3 string
-	Value4 string   
+import "gorm.io/gorm"
+
+type User struct {
+	gorm.Model
+	Username string `gorm:"size:100;not null"`
+	Password string `gorm:"size:255;not null"`
+	UUID     string `gorm:"size:255;primaryKey;unique"`
+	Email    string `gorm:"size:255;not null"`
+	Role     string `gorm:"size:100;not null"`
+}
+type App struct {
+	gorm.Model
+	Name string `gorm:"size:100;not null"`
+	UUID string `gorm:"size:255;primaryKey"` // UUID als Primärschlüssel
+
+}
+type UserFusion struct {
+	gorm.Model
+	AppUUID  string `gorm:"type:uuid;not null"`
+	UserUUID string `gorm:"type:uuid;not null"`
 }
 
-
-type Keys struct {
-	ID   uint   `gorm:"primaryKey"`
-	Guid string `gorm:"size:100"`
-	Typ string `gorm:"size:100"`
-	Desc string `gorm:"size:500"`
-	IdentKey string `gorm:"size:500"`
-	PubKey string
-	PrivKey string
-	Fernet string
+type Secret struct {
+	gorm.Model
+	Name         string `gorm:"size:100;not null"`
+	Content      string `gorm:"size:255;not null"`
+	UUID         string `gorm:"size:255;primaryKey"`
+	AppUUID      string `gorm:"type:uuid;not null"`
+	CreatorUUID  string `gorm:"type:uuid;not null"`
+	ModifierUUID string `gorm:"type:uuid;not null"`
 }
-
-type Fusion struct {
-	ID   uint   `gorm:"primaryKey"`
-	SGuid string `gorm:"size:100"`
-	KGuid string `gorm:"size:100"`
-	Typ string `gorm:"size:100"`
-	
-}
-// dies ist ein Test
-
