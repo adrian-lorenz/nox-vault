@@ -1,35 +1,31 @@
 package routes
 
 import (
-	"fmt"
+	"github.com/adrian-lorenz/nox-vault/globals"
 
-	"github.com/adrian-lorenz/nox-vault/cmux"
 	"github.com/adrian-lorenz/nox-vault/database"
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
 )
 
 type Check struct {
-	Database bool   `json:"database"`
-	Status   bool   `json:"status"`
-	Message  string `json:"message"`
+	Database bool `json:"database"`
+	MKey     bool `json:"mkey"`
 }
 
 func CheckService(c *gin.Context) {
-	log.Info("GET route check")
 	cfov := Check{}
+	if globals.MasterKey != "" {
+		cfov.MKey = true
+	} else {
+		cfov.MKey = false
+	}
 	var count int64
 	err := database.DB.Raw("SELECT 1").Count(&count).Error
 	if err != nil {
-		fmt.Println(err)
 		cfov.Database = false
-		cfov.Status = false
-		cfov.Message = "DB Connect Error"
 	} else {
 		cfov.Database = count == 1
-		cfov.Status = true
-		cfov.Message = "ok"
 	}
-	c.JSON(200, cmux.JSON{"message": "Hello World"})
+	c.JSON(200, cfov)
 
 }

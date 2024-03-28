@@ -1,9 +1,8 @@
 package main
 
 import (
-	"errors"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
+	"github.com/adrian-lorenz/nox-vault/Middleware"
+	"github.com/adrian-lorenz/nox-vault/secrets"
 	"os"
 
 	"runtime"
@@ -31,8 +30,8 @@ func main() {
 		log.Infoln("Environment file found - set " + globals.Mode)
 	}
 
-	if os.Getenv("VAULT_DSN") == "" {
-		log.Fatal("DATABASE environment variable not set")
+	if os.Getenv("VAULT_PORT") == "" {
+		log.Fatal("environment variables not set")
 	}
 
 	log.Infof(
@@ -54,51 +53,13 @@ func main() {
 	config.AllowHeaders = []string{"*"}
 	config.AllowCredentials = true
 	router.Use(cors.New(config))
-	// routes
+	// STUFF
 	router.GET("/check", routes.CheckService)
-
-	router.GET("/test", func(context *gin.Context) {
-		//search for user
-		var user database.User
-		resA := database.DB.Where(database.User{Username: "admin"}).First(&user)
-		if resA.Error != nil {
-			log.Error(resA.Error)
-		}
-		var app database.App
-		resB := database.DB.Where(database.App{Name: "TestApp"}).First(&app)
-		if resB.Error != nil {
-			log.Error(resB.Error)
-			return // Fügt eine Rückgabe hinzu, um bei einem Fehler zu stoppen
-		}
-
-		//create secret
-		secret := database.Secret{
-			Name:         "TestSecret",
-			UUID:         uuid.New().String(),
-			Content:      "This is a test",
-			AppUUID:      app.UUID,
-			CreatorUUID:  user.UUID,
-			ModifierUUID: user.UUID,
-		}
-		var secExist database.Secret
-		result := database.DB.Where(database.Secret{Name: secret.Name, AppUUID: secret.AppUUID}).First(&secExist)
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			// Datensatz nicht gefunden, also erstellen wir einen neuen
-			result = database.DB.Create(&secret)
-			if result.Error != nil {
-				log.Printf("Fehler beim Erstellen des Secrets: %v", result.Error)
-			} else {
-				log.Println("Secret erfolgreich erstellt.")
-			}
-		} else if result.Error != nil {
-			// Ein anderer Fehler ist aufgetreten
-			log.Printf("Fehler beim Suchen des Secrets: %v", result.Error)
-		} else {
-			// Secret existiert bereits, keine Aktion erforderlich
-			log.Println("Secret existiert bereits, keine Erstellung notwendig.")
-		}
-		context.JSON(200, gin.H{"message": "Test secret created"})
-	})
+	//INTERNAL
+	router.POST("/secret/create", Middleware.TokenRequiredLst(globals.GlobalsWrite), secrets.AddSecret)
+	router.POST("/secret/update", Middleware.TokenRequiredLst(globals.GlobalsWrite))
+	//EXTERNAL
+	router.POST("/secret/get", Middleware.TokenRequiredLst(globals.GlobalsRead))
 
 	log.Infoln("Starting server on localhost:5050")
 
