@@ -2,6 +2,7 @@ package security
 
 import (
 	"github.com/adrian-lorenz/nox-vault/globals"
+	"github.com/adrian-lorenz/nox-vault/tools"
 	"slices"
 )
 
