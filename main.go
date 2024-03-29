@@ -4,6 +4,7 @@ import (
 	"github.com/adrian-lorenz/nox-vault/Middleware"
 	"github.com/adrian-lorenz/nox-vault/engine"
 	"github.com/adrian-lorenz/nox-vault/secrets"
+	"github.com/adrian-lorenz/nox-vault/vault"
 	"os"
 
 	"runtime"
@@ -66,7 +67,7 @@ func main() {
 	router.POST("/secret/create", Middleware.TokenRequiredLst(globals.Internal), secrets.AddSecret)
 	router.POST("/secret/update", Middleware.TokenRequiredLst(globals.Internal))
 	router.GET("/key/gen", Middleware.SysWhitelist(), engine.CreateKey)
-	router.POST("/key/open", Middleware.SysWhitelist(), engine.OpenKey)
+	router.POST("/vault/open", Middleware.SysWhitelist(), vault.OpenVault)
 
 	//EXTERNAL
 	router.POST("/secret/get", Middleware.TokenRequiredLst(globals.Read))

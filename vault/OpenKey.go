@@ -1,4 +1,4 @@
-package engine
+package vault
 
 import (
 	"github.com/adrian-lorenz/nox-vault/cfernet"
@@ -11,7 +11,7 @@ import (
 
 //hDHrEfAXkF_CqUCWHDRVYPH71nekdBiny28ELjGGECc=
 
-func OpenKey(c *gin.Context) {
+func OpenVault(c *gin.Context) {
 	type sKey struct {
 		Key string `json:"key"  binding:"required"`
 	}
