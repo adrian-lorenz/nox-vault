@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/adrian-lorenz/nox-vault/Middleware"
+	"github.com/adrian-lorenz/nox-vault/engine"
 	"github.com/adrian-lorenz/nox-vault/secrets"
 	"os"
 
@@ -19,7 +20,13 @@ import (
 
 func main() {
 	router := gin.Default()
-
+	//check mkdir storage
+	if _, err := os.Stat("storage"); os.IsNotExist(err) {
+		errMk := os.Mkdir("storage", 0755)
+		if errMk != nil {
+			return
+		}
+	}
 	err := godotenv.Load()
 	if err != nil {
 		log.Infoln("No environment file found - set PROD")
@@ -56,10 +63,13 @@ func main() {
 	// STUFF
 	router.GET("/check", routes.CheckService)
 	//INTERNAL
-	router.POST("/secret/create", Middleware.TokenRequiredLst(globals.GlobalsWrite), secrets.AddSecret)
-	router.POST("/secret/update", Middleware.TokenRequiredLst(globals.GlobalsWrite))
+	router.POST("/secret/create", Middleware.TokenRequiredLst(globals.Internal), secrets.AddSecret)
+	router.POST("/secret/update", Middleware.TokenRequiredLst(globals.Internal))
+	router.GET("/key/gen", Middleware.SysWhitelist(), engine.CreateKey)
+	router.POST("/key/open", Middleware.SysWhitelist(), engine.OpenKey)
+
 	//EXTERNAL
-	router.POST("/secret/get", Middleware.TokenRequiredLst(globals.GlobalsRead))
+	router.POST("/secret/get", Middleware.TokenRequiredLst(globals.Read))
 
 	log.Infoln("Starting server on localhost:5050")
 

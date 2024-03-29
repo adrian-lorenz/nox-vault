@@ -32,3 +32,9 @@ type Secret struct {
 	App          App    `gorm:"foreignKey:AppUUID;references:UUID"`
 	Owner        User   `gorm:"foreignKey:CreatorUUID;references:UUID"`
 }
+
+type Settings struct {
+	gorm.Model
+	TestKey string `gorm:"size:255;not null"`
+	Guid    string `gorm:"size:255;not null"`
+}

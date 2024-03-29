@@ -2,6 +2,7 @@ package tools
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net"
 	"net/http"
@@ -37,4 +38,17 @@ func GetDnsIP(hostname string) (string, error) {
 	}
 
 	return "", fmt.Errorf("no IPv4 address found for %s", hostname)
+}
+func GetIP(c *gin.Context) string {
+	i1 := c.Request.Header.Get("X-Forwarded-For")
+	i2 := c.Request.RemoteAddr
+	ip := i1
+	if ip == "" {
+		ip = i2
+	}
+	host, _, err := net.SplitHostPort(ip)
+	if err != nil {
+		return ip
+	}
+	return host
 }

@@ -29,7 +29,7 @@ func ConnectDB() error {
 		}
 
 	}
-	errCre := DB.AutoMigrate(&User{}, &App{}, &UserFusion{}, &Secret{})
+	errCre := DB.AutoMigrate(&User{}, &App{}, &UserFusion{}, &Secret{}, &Settings{})
 	if errCre != nil {
 		return errCre
 	}

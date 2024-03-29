@@ -4,8 +4,12 @@ var (
 	Mode               = ""
 	MasterKey          = ""
 	JWTKey             = ""
-	SystemWhitelist    []string
+	SystemWhitelist    = []string{"127.0.0.1"}
 	SystemWhitelistDNS []string
-	GlobalsRead        []string
-	GlobalsWrite       []string
+	Whitelist          []string
+	WhitelistDNS       []string
+	Read               []string
+	Write              []string
+	Internal           []string
+	Look               bool = true
 )

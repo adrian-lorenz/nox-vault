@@ -1,6 +1,8 @@
 package cfernet
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"github.com/fernet/fernet-go"
 	log "github.com/sirupsen/logrus"
 	"time"
@@ -34,4 +36,16 @@ func (e *Encryptor) Decrypt(cipherText string) string {
 	tenYears := 10 * 365 * 24 * time.Hour
 	plainText := fernet.VerifyAndDecrypt([]byte(cipherText), tenYears, []*fernet.Key{e.Ckey})
 	return string(plainText)
+}
+
+func CreateFernetKey(len int) (string, error) {
+	keyLength := len
+	key := make([]byte, keyLength)
+	_, err := rand.Read(key)
+	if err != nil {
+		log.Error("Fehler beim Generieren des Schlüssels:", err)
+		return "", err
+	}
+	encodedKey := base64.URLEncoding.EncodeToString(key)
+	return encodedKey, nil
 }
