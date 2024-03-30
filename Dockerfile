@@ -9,5 +9,7 @@ FROM amd64/alpine:latest
 WORKDIR /app
 COPY --from=builder /app/main /app/main
 RUN chmod +x /app/main
-EXPOSE 5080
+EXPOSE 5050
+EXPOSE 443
+EXPOSE 80
 CMD ["./main"]

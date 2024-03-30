@@ -10,10 +10,12 @@ import (
 type Check struct {
 	Database bool `json:"database"`
 	MKey     bool `json:"mkey"`
+	Looked   bool `json:"looked"`
 }
 
 func CheckService(c *gin.Context) {
 	cfov := Check{}
+	cfov.Looked = globals.Look
 	if globals.MasterKey != "" {
 		cfov.MKey = true
 	} else {

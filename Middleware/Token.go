@@ -59,7 +59,7 @@ func TokenRequiredLst(authlist []string) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Set("tokenData", td)
+		c.Set("TokenInfo", td)
 		c.Next()
 	}
 }

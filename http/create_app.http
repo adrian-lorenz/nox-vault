@@ -1,0 +1,10 @@
+POST http://127.0.0.1:5050/app/create
+Content-Type: application/json
+x-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJ1dWlkIjoiN0E0QzJFMDktMjA3Qy00NjZFLTg4MTQtQzkwMkZCMjk2NDMyIn0.XVyRGeQ8fjOKPs9Km9kBAQNogQugs7w__TbbGI5lRJk
+
+
+{
+  "name": "bgm-aa-ss"
+}
+
+

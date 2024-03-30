@@ -29,7 +29,7 @@ func ConnectDB() error {
 		}
 
 	}
-	errCre := DB.AutoMigrate(&User{}, &App{}, &UserFusion{}, &Secret{}, &Settings{})
+	errCre := DB.AutoMigrate(&User{}, &App{}, &Secret{}, &Settings{})
 	if errCre != nil {
 		return errCre
 	}
@@ -63,8 +63,9 @@ func prepareData(DB *gorm.DB) {
 	// App erstellen oder finden, falls sie bereits existiert
 
 	app := App{
-		Name: "TestApp",
-		UUID: "A3DAD5CB-942B-4939-A13D-979C3C4F7384",
+		Name:        "TestApp",
+		UUID:        "A3DAD5CB-942B-4939-A13D-979C3C4F7384",
+		CreatorUUID: "7A4C2E09-207C-466E-8814-C902FB296432",
 	}
 	result = DB.FirstOrCreate(&app)
 	if result.Error != nil {
@@ -73,15 +74,6 @@ func prepareData(DB *gorm.DB) {
 	}
 
 	// Add Fusion
-	userFusion := UserFusion{
-		AppUUID:  app.UUID,
-		UserUUID: user.UUID,
-	}
-	result = DB.Where(UserFusion{AppUUID: app.UUID, UserUUID: user.UUID}).FirstOrCreate(&userFusion)
-	if result.Error != nil {
-		log.Printf("Fehler beim Erstellen oder Finden der Fusion: %v", result.Error)
-		return
-	}
 
 	return
 

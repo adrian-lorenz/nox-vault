@@ -3,5 +3,5 @@ POST http://127.0.0.1:5050/vault/open
 Content-Type: application/json
 
 {
-"key": "hDHrEfAXkF_CqUCWHDRVYPH71nekdBiny28ELjGGECc="
+"key": "vTt_7gwjYvhvaOvLAIEEj08MwnwTYE5j7pSKSoMHpeQ="
 }

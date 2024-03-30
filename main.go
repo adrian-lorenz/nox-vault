@@ -2,8 +2,10 @@ package main
 
 import (
 	"github.com/adrian-lorenz/nox-vault/Middleware"
+	"github.com/adrian-lorenz/nox-vault/app"
 	"github.com/adrian-lorenz/nox-vault/engine"
 	"github.com/adrian-lorenz/nox-vault/secrets"
+	"github.com/adrian-lorenz/nox-vault/security"
 	"github.com/adrian-lorenz/nox-vault/vault"
 	"os"
 
@@ -21,13 +23,17 @@ import (
 
 func main() {
 	router := gin.Default()
-	//check mkdir storage
-	if _, err := os.Stat("storage"); os.IsNotExist(err) {
-		errMk := os.Mkdir("storage", 0755)
-		if errMk != nil {
-			return
+	dirs := []string{"noxvault/storage", "noxvault/certs", "noxvault/config"}
+	for _, dir := range dirs {
+		if _, err := os.Stat(dir); os.IsNotExist(err) {
+			errMk := os.MkdirAll(dir, 0755)
+			if errMk != nil {
+				return
+			}
 		}
 	}
+	//check mkdir storage
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Infoln("No environment file found - set PROD")
@@ -66,8 +72,10 @@ func main() {
 	//INTERNAL
 	router.POST("/secret/create", Middleware.TokenRequiredLst(globals.Internal), secrets.AddSecret)
 	router.POST("/secret/update", Middleware.TokenRequiredLst(globals.Internal))
+	router.POST("/app/create", Middleware.TokenRequiredLst(globals.Internal), app.CreateApp)
 	router.GET("/key/gen", Middleware.SysWhitelist(), engine.CreateKey)
 	router.POST("/vault/open", Middleware.SysWhitelist(), vault.OpenVault)
+	router.POST("/login", Middleware.SysWhitelist(), security.Login)
 
 	//EXTERNAL
 	router.POST("/secret/get", Middleware.TokenRequiredLst(globals.Read))

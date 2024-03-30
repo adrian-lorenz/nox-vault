@@ -10,6 +10,6 @@ var (
 	WhitelistDNS       []string
 	Read               []string
 	Write              []string
-	Internal           []string
+	Internal                = []string{"admin"}
 	Look               bool = true
 )

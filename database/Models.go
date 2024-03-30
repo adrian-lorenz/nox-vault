@@ -12,13 +12,10 @@ type User struct {
 }
 type App struct {
 	gorm.Model
-	Name string `gorm:"size:100;not null"`
-	UUID string `gorm:"size:255;unique"`
-}
-type UserFusion struct {
-	gorm.Model
-	AppUUID  string `gorm:"size:255;not null"`
-	UserUUID string `gorm:"size:255;not null"`
+	Name        string `gorm:"size:100;not null"`
+	UUID        string `gorm:"size:255;unique"`
+	CreatorUUID string `gorm:"size:255;not null"`
+	Owner       User   `gorm:"foreignKey:CreatorUUID;references:UUID"`
 }
 
 type Secret struct {

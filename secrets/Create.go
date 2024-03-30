@@ -3,7 +3,9 @@ package secrets
 import (
 	"errors"
 	"github.com/adrian-lorenz/nox-vault/Middleware"
+	"github.com/adrian-lorenz/nox-vault/cfernet"
 	"github.com/adrian-lorenz/nox-vault/database"
+	"github.com/adrian-lorenz/nox-vault/globals"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -28,17 +30,13 @@ func AddSecret(c *gin.Context) {
 		c.JSON(500, gin.H{"message": "bad payload"})
 		return
 	}
-	cGo := checkUserApp(tokenInfo.UUID, s.App)
+	fnet := cfernet.NewEncryptor(globals.MasterKey)
 
-	if !cGo {
-		c.JSON(500, gin.H{})
-		return
-	}
 	//create secret
 	secret := database.Secret{
 		Name:         s.Name,
 		UUID:         uuid.New().String(),
-		Content:      "This is a test",
+		Content:      fnet.Encrypt(s.Secret),
 		AppUUID:      s.App,
 		CreatorUUID:  tokenInfo.UUID,
 		ModifierUUID: tokenInfo.UUID,
@@ -48,7 +46,7 @@ func AddSecret(c *gin.Context) {
 		c.JSON(500, gin.H{"message": errCs.Error()})
 		return
 	}
-	c.JSON(201, gin.H{"message": "Test secret created"})
+	c.JSON(201, gin.H{"message": "secret created"})
 }
 
 func createSecret(secret database.Secret) error {
@@ -66,17 +64,5 @@ func createSecret(secret database.Secret) error {
 
 	} else {
 		return errors.New("secret existiert bereits")
-	}
-}
-
-func checkUserApp(userUUID string, appUUID string) bool {
-	var userApp database.UserFusion
-	result := database.DB.Where(database.UserFusion{UserUUID: userUUID, AppUUID: appUUID}).First(&userApp)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return false
-	} else if result.Error != nil {
-		return false
-	} else {
-		return true
 	}
 }
